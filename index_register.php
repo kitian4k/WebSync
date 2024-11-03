@@ -5,13 +5,23 @@ if (isset($_POST['register_btn'])) {
     $fullname = $_POST['fullname'];
     $username = $_POST['username'];
     $email = $_POST['email'];
+    $user_course = $_POST['user_course'];
+    $user_group = $_POST['user_group'];
 
     // Check if fullname, username, or email already exists
     if ($obj_admin->checkUserExists($fullname, $username, $email)) {
         $errorMessage = "Full name, username, or email already exists. Please try with different details.";
     } else {
-        $obj_admin->admin_register($_POST);
-        header('Location: index.php'); // Redirect to login page if successful
+        // Pass new fields to the registration method
+        $obj_admin->admin_register([
+            'fullname' => $fullname,
+            'username' => $username,
+            'email' => $email,
+            'user_course' => $user_course,
+            'user_group' => $user_group,
+            'password' => $_POST['password']
+        ]);
+        header('Location: index.php');
         exit();
     }
 }
@@ -34,7 +44,7 @@ include("include/login_header.php");
 
                     <?php if (isset($errorMessage)) { ?>
                             <div class="alert alert-danger"><?php echo $errorMessage; ?></div>
-                        <?php } ?>
+                    <?php } ?>
 
                     <!-- Full Name Textbox -->
                     <div class="input-group form-group mb-3">
@@ -45,7 +55,7 @@ include("include/login_header.php");
                     <!-- Username Textbox with Pattern -->
                     <div class="input-group form-group mb-3">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                        <input type="text" class="form-control" name="username" placeholder="Username" 
+                        <input type="text" class="form-control" name="username" placeholder="TUP ID Number" 
                             pattern="TUPM-\d{2}-\d{4}" 
                             title="Username must be in the format TUPM-XX-XXXX" 
                             required>
@@ -54,11 +64,35 @@ include("include/login_header.php");
                     <!-- Email Input -->
                     <div class="input-group form-group mb-3">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                        <input type="email" class="form-control" name="email" placeholder="Email" 
+                        <input type="email" class="form-control" name="email" placeholder="TUP Email Address" 
                             pattern="^[a-zA-Z0-9._%+-]+@tup\.edu\.ph$" 
                             title="Email must be in the format yourname@tup.edu.ph" 
                             required>
                     </div>
+
+                    <!-- Course Dropdown -->
+                    <div class="input-group form-group mb-3">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-education"></i></span>
+                        <select class="form-control" name="user_course" required>
+                            <option value="" disabled selected>Select Course</option>
+                            <option value="BSIE-ICT">BSIE-ICT</option>
+                            <option value="BTVTED-Compro">BTVTED-Compro</option>
+                            <option value="BTVTED-EST">BTVTED-EST</option>
+                        </select>
+                    </div>
+
+                    <!-- Group Dropdown -->
+                    <div class="input-group form-group mb-3">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-th-large"></i></span>
+                        <select class="form-control" name="user_group" required>
+                            <option value="" disabled selected>Select Group</option>
+                            <option value="Group 1">Group 1</option>
+                            <option value="Group 2">Group 2</option>
+                            <option value="Group 3">Group 3</option>
+                            <option value="Group 4">Group 4</option>
+                        </select>
+                    </div>
+
                     <!-- Password Textbox -->
                     <div class="input-group form-group mb-3">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -78,7 +112,6 @@ include("include/login_header.php");
         </div>
     </div>
 </div>
-
 
 <style>
     .ad-auth-wrapper {

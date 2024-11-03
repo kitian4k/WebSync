@@ -5,13 +5,13 @@ require 'authentication.php'; // admin authentication check
 $user_id = $_SESSION['admin_id'];
 $user_name = $_SESSION['name'];
 $security_key = $_SESSION['security_key'];
+$user_course = $_SESSION['user_course']; // assuming this is set in session after login
+$user_group = $_SESSION['user_group'];   // assuming this is set in session after login
+
 if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
     exit();
 }
-
-// Check user role
-$user_role = $_SESSION['user_role'];
 
 if (isset($_POST['add_task'])) {
     // Add task logic (assuming $obj_admin->add_new_task adds a task and returns true/false)
@@ -24,11 +24,17 @@ if (isset($_POST['add_task'])) {
     }
 }
 
+if (isset($_SESSION['user_course']) && isset($_SESSION['user_group'])) {
+    $user_course = $_SESSION['user_course'];
+    $user_group = $_SESSION['user_group'];
+} else {
+    // Handle the case where user_course and user_group are not set, e.g., redirect to an error page
+    die("Error: User course or group not set in session.");
+}
+
 $page_name = "Assign New Task";
 include("include/sidebar.php");
 ?>
-
-<!--modal for employee add-->
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -62,18 +68,23 @@ include("include/sidebar.php");
                                 <label class="control-label">Assign To</label>
 
                                 <?php 
-                                $sql = "SELECT user_id, fullname FROM tbl_admin WHERE user_role = 1";
-                                $info = $obj_admin->manage_all_info($sql);   
+                                // Fetch only users from the same user_course and user_group
+                                $sql = "SELECT user_id, fullname 
+                                        FROM tbl_admin 
+                                        WHERE user_course = :user_course AND user_group = :user_group";
+                                $stmt = $obj_admin->db->prepare($sql);
+                                $stmt->bindParam(':user_course', $user_course);
+                                $stmt->bindParam(':user_group', $user_group);
+                                $stmt->execute();
                                 ?>
-                                <select class="form-control" name="assign_to" id="aassign_to" <?php if($user_role != 1){ ?> disabled="true" <?php } ?>>
+
+                                <select class="form-control" name="assign_to" id="assign_to">
                                     <option value="">Select</option>
 
-                                    <?php while($rows = $info->fetch(PDO::FETCH_ASSOC)){ ?>
-                                    <option value="<?php echo $rows['user_id']; ?>" <?php 
-                                        if (isset($row) && $rows['user_id'] == $row['t_user_id']) { 
-                                            echo 'selected'; 
-                                        } 
-                                    ?>><?php echo $rows['fullname']; ?></option>
+                                    <?php while($rows = $stmt->fetch(PDO::FETCH_ASSOC)) { ?>
+                                    <option value="<?php echo $rows['user_id']; ?>">
+                                        <?php echo $rows['fullname']; ?>
+                                    </option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -82,9 +93,9 @@ include("include/sidebar.php");
                                 <label class="control-label">Status</label>
                                 
                                 <select class="form-control" name="status" id="status">
-                                    <option value="0" <?php if (isset($row) && $row['status'] == 0) { echo 'selected'; } ?>>To-do</option>
-                                    <option value="1" <?php if (isset($row) && $row['status'] == 1) { echo 'selected'; } ?>>In Progress</option>
-                                    <option value="2" <?php if (isset($row) && $row['status'] == 2) { echo 'selected'; } ?>>Done</option>
+                                    <option value="0">To-do</option>
+                                    <option value="1">In Progress</option>
+                                    <option value="2">Done</option>
                                 </select>
                             </div>
 

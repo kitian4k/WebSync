@@ -36,6 +36,8 @@ class Admin_Class
 		$username = $this->test_form_input_data($data['username']);
 		$email = $this->test_form_input_data($data['email']);
 		$password = $this->test_form_input_data($data['password']);
+		$user_course = $this->test_form_input_data($data['user_course']);
+		$user_group = $this->test_form_input_data($data['user_group']);
 		$user_role = 1;  // Default role for regular users, change as needed
 	
 		// Check if username or email already exists
@@ -55,12 +57,15 @@ class Admin_Class
 		}
 	
 		// Insert new user if checks pass
-		$sql = "INSERT INTO tbl_admin (fullname, username, email, password, user_role) VALUES (:fullname, :username, :email, :password, :user_role)";
+		$sql = "INSERT INTO tbl_admin (fullname, username, email, password, user_course, user_group, user_role) 
+				VALUES (:fullname, :username, :email, :password, :user_course, :user_group, :user_role)";
 		$stmt = $this->db->prepare($sql);
 		$stmt->bindParam(':fullname', $fullname);
 		$stmt->bindParam(':username', $username);
 		$stmt->bindParam(':email', $email);
-		$stmt->bindParam(':password', $password);  // Note: For security, you should hash this password
+		$stmt->bindParam(':password', $password);  // Storing the hashed password
+		$stmt->bindParam(':user_course', $user_course);
+		$stmt->bindParam(':user_group', $user_group);
 		$stmt->bindParam(':user_role', $user_role);
 	
 		if ($stmt->execute()) {
@@ -114,43 +119,38 @@ class Admin_Class
 
  
 /* ---------------------- Admin Login Check ----------------------------------- */
+public function admin_login_check($data) {
+    $upass = $this->test_form_input_data($data['admin_password']);
+    $username = $this->test_form_input_data($data['username']);
 
-    public function admin_login_check($data) {
-        
-        $upass = $this->test_form_input_data($data['admin_password']); // Remove md5
-		$username = $this->test_form_input_data($data['username']);
-        try
-       {
-          $stmt = $this->db->prepare("SELECT * FROM tbl_admin WHERE username=:uname AND password=:upass LIMIT 1");
-          $stmt->execute(array(':uname'=>$username, ':upass'=>$upass));
-          $userRow=$stmt->fetch(PDO::FETCH_ASSOC);
-          if($stmt->rowCount() > 0)
-          {
-          		session_start();
-	            $_SESSION['admin_id'] = $userRow['user_id'];
-	            $_SESSION['name'] = $userRow['fullname'];
-	            $_SESSION['security_key'] = 'rewsgf@%^&*nmghjjkh';
-	            $_SESSION['user_role'] = $userRow['user_role'];
-	            $_SESSION['temp_password'] = $userRow['temp_password'];
+    try {
+        $stmt = $this->db->prepare("SELECT * FROM tbl_admin WHERE username = :uname AND password = :upass LIMIT 1");
+        $stmt->execute(array(':uname' => $username, ':upass' => $upass));
+        $userRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
-          		if($userRow['temp_password'] == null){
-	                header('Location: dashboard.php');
-          		}else{
-          			header('Location: changePasswordForEmployee.php');
-          		}
-                
-             
-          }else{
-			  $message = 'Invalid user name or Password';
-              return $message;
-		  }
-       }
-       catch(PDOException $e)
-       {
-           echo $e->getMessage();
-       }	
-		
+        if ($stmt->rowCount() > 0) {
+            session_start();
+            $_SESSION['admin_id'] = $userRow['user_id'];
+            $_SESSION['name'] = $userRow['fullname'];
+            $_SESSION['security_key'] = 'rewsgf@%^&*nmghjjkh';
+            $_SESSION['user_role'] = $userRow['user_role'];
+            $_SESSION['user_course'] = $userRow['user_course']; // Set user_course in session
+            $_SESSION['user_group'] = $userRow['user_group'];   // Set user_group in session
+            $_SESSION['temp_password'] = $userRow['temp_password'];
+
+            if ($userRow['temp_password'] == null) {
+                header('Location: dashboard.php');
+            } else {
+                header('Location: changePasswordForEmployee.php');
+            }
+        } else {
+            $message = 'Invalid username or password';
+            return $message;
+        }
+    } catch (PDOException $e) {
+        echo $e->getMessage();
     }
+}
 
 	public function change_password_for_employee($data) {
 		$password = $this->test_form_input_data($data['password']);

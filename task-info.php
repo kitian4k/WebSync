@@ -1,8 +1,23 @@
 <?php
 
-require 'authentication.php'; // admin authentication check 
+require 'authentication.php'; // Admin authentication check 
 
-// auth check
+// Database connection (if not already included)
+$host = 'localhost';
+$db = 'taskmatic';
+$user = 'root';
+$pass = '';
+$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
+
+try {
+    $pdo = new PDO($dsn, $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+    exit();
+}
+
+// Auth check
 $user_id = $_SESSION['admin_id'];
 $user_name = $_SESSION['name'];
 $security_key = $_SESSION['security_key'];
@@ -10,18 +25,14 @@ if ($user_id == NULL || $security_key == NULL) {
     header('Location: login_header.php');
 }
 
-// check admin role
-$user_role = $_SESSION['user_role'];
+// Get the user's course and group from the database
+$stmt = $pdo->prepare("SELECT user_course, user_group FROM tbl_admin WHERE user_id = :user_id");
+$stmt->execute(['user_id' => $user_id]);
+$user_info = $stmt->fetch(PDO::FETCH_ASSOC);
+$user_course = $user_info['user_course'];
+$user_group = $user_info['user_group'];
 
-if(isset($_GET['delete_task'])){
-  $action_id = $_GET['task_id'];
-  
-  $sql = "DELETE FROM task_info WHERE task_id = :id";
-  $sent_po = "task-info.php";
-  $obj_admin->delete_data_by_this_method($sql,$action_id,$sent_po);
-}
-
-$page_name="Task_Info";
+$page_name = "Task_Info";
 include("include/sidebar.php");
 
 ?>
@@ -33,7 +44,6 @@ include("include/sidebar.php");
       <div class="row">
         <div class="col-md-8">
           <div class="btn-group">
-            <!-- Assign New Task button will redirect to assign_new_task.php -->
             <?php if($user_role == 1){ ?>
             <a href="assign_new-task.php" class="btn btn-primary btn-menu">Add New Task</a>
             <?php } ?>
@@ -57,26 +67,21 @@ include("include/sidebar.php");
           </thead>
           <tbody>
             <?php 
-            if($user_role == 1){
-              $sql = "SELECT a.*, b.fullname 
-                      FROM task_info a
-                      INNER JOIN tbl_admin b ON(a.t_user_id = b.user_id)
-                      ORDER BY a.task_id DESC";
-            } else {
-              $sql = "SELECT a.*, b.fullname 
-                      FROM task_info a
-                      INNER JOIN tbl_admin b ON(a.t_user_id = b.user_id)
-                      WHERE a.t_user_id = $user_id
-                      ORDER BY a.task_id DESC";
-            }
+            // Query to fetch tasks based on the user's course and group
+            $sql = "SELECT a.*, b.fullname 
+                    FROM task_info a
+                    INNER JOIN tbl_admin b ON a.t_user_id = b.user_id
+                    WHERE b.user_course = :user_course AND b.user_group = :user_group
+                    ORDER BY a.task_id DESC";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['user_course' => $user_course, 'user_group' => $user_group]);
 
-            $info = $obj_admin->manage_all_info($sql);
             $serial  = 1;
-            $num_row = $info->rowCount();
-            if($num_row == 0){
+            $num_row = $stmt->rowCount();
+            if ($num_row == 0) {
               echo '<tr><td colspan="7">No Data found</td></tr>';
             }
-            while($row = $info->fetch(PDO::FETCH_ASSOC)){
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             ?>
               <tr>
                 <td><?php echo $serial++; ?></td>
@@ -85,18 +90,20 @@ include("include/sidebar.php");
                 <td><?php echo $row['t_start_time']; ?></td>
                 <td><?php echo $row['t_end_time']; ?></td>
                 <td>
-                  <?php if($row['status'] == 1){
+                  <?php 
+                    if ($row['status'] == 1) {
                       echo "<span class='label label-warning'><i class='glyphicon glyphicon-refresh'></i> In Progress</span>";
-                  } elseif($row['status'] == 2){
+                    } elseif ($row['status'] == 2) {
                       echo "<span class='label label-success'><i class='glyphicon glyphicon-ok'></i> Done </span>";
-                  } else {
+                    } else {
                       echo "<span class='label label-danger'><i class='glyphicon glyphicon-remove'></i> To-do </span>";
-                  } ?>
+                    }
+                  ?>
                 </td>
                 <td>
-                  <a title="Update Task" href="edit-task.php?task_id=<?php echo $row['task_id'];?>" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></a>
+                  <a title="Update Task" href="edit-task.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></a>
                   <a title="View" href="task-details.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-folder-open"></span></a>
-                  <?php if($user_role == 1){ ?>
+                  <?php if ($user_role == 1) { ?>
                   <a class="btn btn-danger btn-sm" title="Delete" href="?delete_task=delete_task&task_id=<?php echo $row['task_id']; ?>" onclick="return confirm('Are you sure?');"><span class="glyphicon glyphicon-trash"></span></a>
                   <?php } ?>
                 </td>
