@@ -34,7 +34,7 @@ include("include/login_header.php");
     <div class="well col-md-6" style="position:relative;">
         <div class="row">
             <div class="col-md-6">
-                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 130px;">
+                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 170px;">
             </div>
             <div class="col-md-6">
                 <form class="row" action="" method="POST" onsubmit="return validateForm()">
