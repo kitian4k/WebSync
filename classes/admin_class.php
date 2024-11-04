@@ -391,33 +391,37 @@ public function admin_login_check($data) {
 
 	/* =================Task Related===================== */
 
-	public function add_new_task($data){
-		// data insert   
-		$task_title  = $this->test_form_input_data($data['task_title']);
+	public function add_new_task($data) {
+		// Collect form data
+		$task_title = $this->test_form_input_data($data['task_title']);
 		$task_description = $this->test_form_input_data($data['task_description']);
 		$t_start_time = $this->test_form_input_data($data['t_start_time']);
 		$t_end_time = $this->test_form_input_data($data['t_end_time']);
 		$assign_to = $this->test_form_input_data($data['assign_to']);
-
-		try{
-			$add_task = $this->db->prepare("INSERT INTO task_info (t_title, t_description, t_start_time, 	t_end_time, t_user_id) VALUES (:x, :y, :z, :a, :b) ");
-
-			$add_task->bindparam(':x', $task_title);
-			$add_task->bindparam(':y', $task_description);
-			$add_task->bindparam(':z', $t_start_time);
-			$add_task->bindparam(':a', $t_end_time);
-			$add_task->bindparam(':b', $assign_to);
-
+		$status = $this->test_form_input_data($data['status']); // Capture the status
+	
+		try {
+			// Include status in the SQL query
+			$add_task = $this->db->prepare("INSERT INTO task_info (t_title, t_description, t_start_time, t_end_time, t_user_id, status) 
+											VALUES (:title, :description, :start_time, :end_time, :user_id, :status)");
+	
+			// Bind parameters
+			$add_task->bindParam(':title', $task_title);
+			$add_task->bindParam(':description', $task_description);
+			$add_task->bindParam(':start_time', $t_start_time);
+			$add_task->bindParam(':end_time', $t_end_time);
+			$add_task->bindParam(':user_id', $assign_to);
+			$add_task->bindParam(':status', $status); // Bind the status parameter
+	
+			// Execute query
 			$add_task->execute();
-
-			$_SESSION['Task_msg'] = 'Task Add Successfully';
-
+	
+			$_SESSION['Task_msg'] = 'Task added successfully';
 			header('Location: task-info.php');
-		}catch (PDOException $e) {
+		} catch (PDOException $e) {
 			echo $e->getMessage();
 		}
 	}
-
 
 		public function update_task_info($data, $task_id, $user_role){
 			$task_title  = $this->test_form_input_data($data['task_title']);

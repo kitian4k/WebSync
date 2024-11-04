@@ -24,13 +24,6 @@ if (isset($_POST['add_task'])) {
     }
 }
 
-if (isset($_SESSION['user_course']) && isset($_SESSION['user_group'])) {
-    $user_course = $_SESSION['user_course'];
-    $user_group = $_SESSION['user_group'];
-} else {
-    // Handle the case where user_course and user_group are not set, e.g., redirect to an error page
-    die("Error: User course or group not set in session.");
-}
 
 $page_name = "Assign New Task";
 include("include/sidebar.php");
