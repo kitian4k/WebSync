@@ -1,178 +1,91 @@
 <?php
 
-require 'authentication.php'; // admin authentication check 
+require 'authentication.php'; // Admin authentication check 
 
-// auth check
+// Database connection
+$host = 'localhost';
+$db = 'taskmatic';
+$user = 'root';
+$pass = '';
+$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
+
+try {
+    $pdo = new PDO($dsn, $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+    exit();
+}
+
+// Auth check
 $user_id = $_SESSION['admin_id'];
 $user_name = $_SESSION['name'];
 $security_key = $_SESSION['security_key'];
 $user_role = $_SESSION['user_role'];
 if ($user_id == NULL || $security_key == NULL) {
     header('Location: index.php');
+    exit();
 }
 
+// Get the user's course and group from the database
+$stmt = $pdo->prepare("SELECT user_course, user_group FROM tbl_admin WHERE user_id = :user_id");
+$stmt->execute(['user_id' => $user_id]);
+$user_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$user_course = $user_info['user_course'];
+$user_group = $user_info['user_group'];
 
+// Fetch members of the same group
+$group_members_sql = "SELECT user_id, fullname FROM tbl_admin WHERE user_course = :user_course AND user_group = :user_group AND user_id != :user_id";
+$group_members_stmt = $pdo->prepare($group_members_sql);
+$group_members_stmt->execute([
+    'user_course' => $user_course,
+    'user_group' => $user_group,
+    'user_id' => $user_id // Exclude the logged-in user from the list
+]);
 
-if(isset($_GET['delete_attendance'])){
-  $action_id = $_GET['aten_id'];
-  
-  $sql = "DELETE FROM attendance_info WHERE aten_id = :id";
-  $sent_po = "attendance-info.php";
-  $obj_admin->delete_data_by_this_method($sql,$action_id,$sent_po);
-}
-
-
-if(isset($_POST['add_punch_in'])){
-   $info = $obj_admin->add_punch_in($_POST);
-}
-
-if(isset($_POST['add_punch_out'])){
-    $obj_admin->add_punch_out($_POST);
-}
-
-
-$page_name="Attendance";
+$page_name = "Group Members";
 include("include/sidebar.php");
 
-//$info = "Hello World";
 ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-
-
-    <div class="row">
-      <div class="col-md-12">
+<div class="row">
+    <div class="col-md-12">
         <div class="well well-custom">
-          <div class="row">
-            <div class="col-md-8 ">
-              <div class="btn-group">
-                <?php 
-               
-                  $sql = "SELECT * FROM attendance_info
-                          WHERE atn_user_id = $user_id AND out_time IS NULL";
-                
+            <center><h3>Group Members</h3></center>
+            <div class="gap"></div>
 
-                  $info = $obj_admin->manage_all_info($sql);
-                  $num_row = $info->rowCount();
-                  if($num_row==0){
-              ?>
-
-                <div class="btn-group">
-                  <form method="post" role="form" action="">
-                    <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-                    <button type="submit" name="add_punch_in" class="btn btn-primary btn-lg rounded" >Clock In</button>
-                  </form>
-                  
-                </div>
-
-              <?php } ?>
-
-              </div>
+            <div class="table-responsive">
+                <table class="table table-condensed display" id="example" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Member Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $serial = 1;
+                        $num_row = $group_members_stmt->rowCount();
+                        if ($num_row == 0) {
+                            echo '<tr><td colspan="2">No Members found in your group</td></tr>';
+                        } else {
+                            while ($row = $group_members_stmt->fetch(PDO::FETCH_ASSOC)) {
+                                ?>
+                                <tr>
+                                    <td><?php echo $serial; $serial++; ?></td>
+                                    <td><?php echo $row['fullname']; ?></td>
+                                </tr>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
             </div>
-            
-          </div>
-
-          <center><h3>Manage Atendance</h3>  </center>
-          <div class="gap"></div>
-
-          <div class="gap"></div>
-
-          <div class="table-responsive">
-            <table  class="table table-codensed  display" id="example" style="width:100%">
-             <thead>
-    <tr>
-        <th>S.N.</th>
-        <th>Name</th>
-        <th>In Time</th>
-        <th>Out Time</th>
-        <th>Total Duration</th>
-        <th>Status</th>
-        <?php if($user_role == 1){ ?>
-            <th>Action</th>
-        <?php } ?>
-    </tr>
-</thead>
-
-              <tbody>
-
-              <?php 
-                if($user_role == 1){
-                  $sql = "SELECT a.*, b.fullname 
-                  FROM attendance_info a
-                  LEFT JOIN tbl_admin b ON(a.atn_user_id = b.user_id)
-                  ORDER BY a.aten_id DESC";
-                }else{
-                  $sql = "SELECT a.*, b.fullname 
-                  FROM attendance_info a
-                  LEFT JOIN tbl_admin b ON(a.atn_user_id = b.user_id)
-                  WHERE atn_user_id = $user_id
-                  ORDER BY a.aten_id DESC";
-
-                }
-                
-
-                  $info = $obj_admin->manage_all_info($sql);
-                  $serial  = 1;
-                  $num_row = $info->rowCount();
-                  if($num_row==0){
-                    echo '<tr><td colspan="7">No Data found</td></tr>';
-                  }
-                      while( $row = $info->fetch(PDO::FETCH_ASSOC) ){
-              ?>
-                <tr>
-                  <td><?php echo $serial; $serial++; ?></td>
-                  <td><?php echo $row['fullname']; ?></td>
-                  <td><?php echo $row['in_time']; ?></td>
-                  <td><?php echo $row['out_time']; ?></td>
-                  <td><?php
-                    if($row['total_duration'] == null){
-                      $date = new DateTime('now', new DateTimeZone('Asia/Dhaka'));
-                      $current_time = $date->format('d-m-Y H:i:s');
-
-                      $dteStart = new DateTime($row['in_time']);
-                      $dteEnd   = new DateTime($current_time);
-                      $dteDiff  = $dteStart->diff($dteEnd);
-                      echo $dteDiff->format("%H:%I:%S"); 
-                    }else{
-                      echo $row['total_duration'];
-                    }
-                    
-
-                  ?></td>
-                  <?php if($row['out_time'] == null){ ?>
-                  <td>
-                    <form method="post" role="form" action="">
-                      <input type="hidden" name="punch_in_time" value="<?php echo $row['in_time']; ?>">
-                      <input type="hidden" name="aten_id" value="<?php echo $row['aten_id']; ?>">
-                      <button type="submit" name="add_punch_out" class="label label-danger border-0" >Clock Out</button>
-                    </form>
-                  </td>
-                <?php } ?>
-                <?php if($user_role == 1){ ?>
-                 <td>
-                  <a class="btn btn-danger btn-sm" title="Delete" href="?delete_attendance=delete_attendance&aten_id=<?php echo $row['aten_id']; ?>" onclick=" return check_delete();"><span class="glyphicon glyphicon-trash"></span></a>
-                </td>
-              <?php } ?>
-                </tr>
-                <?php } ?>
-                
-              </tbody>
-            </table>
-          </div>
         </div>
-      </div>
     </div>
+</div>
 
-
-<?php
-
-include("include/footer.php");
-
-
-
-?>
-<!-- //  Author Name: Mayuri K. 
- // for any PHP, Codeignitor, Laravel OR Python work contact me at mayuri.infospace@gmail.com  
- //Visit website : www.mayurik.com -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<?php include("include/footer.php"); ?>
