@@ -1,8 +1,7 @@
 <?php
+require 'authentication.php'; // Admin authentication check
 
-require 'authentication.php'; // Admin authentication check 
-
-// Database connection (if not already included)
+// Database connection
 $host = 'localhost';
 $db = 'taskmatic';
 $user = 'root';
@@ -21,16 +20,38 @@ try {
 $user_id = $_SESSION['admin_id'];
 $user_name = $_SESSION['name'];
 $security_key = $_SESSION['security_key'];
+$user_role = $_SESSION['user_role'];
+$user_course = $_SESSION['user_course'];
+$user_group = $_SESSION['user_group'];
+
 if ($user_id == NULL || $security_key == NULL) {
-    header('Location: login_header.php');
+    header('Location: index.php');
+    exit();
 }
 
-// Get the user's course and group from the database
-$stmt = $pdo->prepare("SELECT user_course, user_group FROM tbl_admin WHERE user_id = :user_id");
+// Handle task deletion
+if (isset($_GET['delete_task']) && $_GET['delete_task'] === 'delete_task' && isset($_GET['task_id'])) {
+    $task_id = $_GET['task_id'];
+
+    try {
+        // Delete the task with the given ID
+        $stmt = $pdo->prepare("DELETE FROM task_info WHERE task_id = :task_id");
+        $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Redirect to the same page after deletion
+        header("Location: task-info.php");
+        exit();
+    } catch (PDOException $e) {
+        echo "Error deleting task: " . $e->getMessage();
+    }
+}
+
+
+// Get the user group of the logged-in user
+$stmt = $pdo->prepare("SELECT user_group FROM tbl_admin WHERE user_id = :user_id");
 $stmt->execute(['user_id' => $user_id]);
-$user_info = $stmt->fetch(PDO::FETCH_ASSOC);
-$user_course = $user_info['user_course'];
-$user_group = $user_info['user_group'];
+$user_group = $stmt->fetchColumn(); // Get the user's group
 
 $page_name = "Task_Info";
 include("include/sidebar.php");
@@ -67,14 +88,14 @@ include("include/sidebar.php");
           </thead>
           <tbody>
             <?php 
-            // Query to fetch tasks based on the user's course and group
+            // Query to fetch tasks based on the user's group
             $sql = "SELECT a.*, b.fullname 
                     FROM task_info a
                     INNER JOIN tbl_admin b ON a.t_user_id = b.user_id
-                    WHERE b.user_course = :user_course AND b.user_group = :user_group
+                    WHERE b.user_group = :user_group
                     ORDER BY a.task_id DESC";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute(['user_course' => $user_course, 'user_group' => $user_group]);
+            $stmt->execute(['user_group' => $user_group]);
 
             $serial  = 1;
             $num_row = $stmt->rowCount();
@@ -102,8 +123,8 @@ include("include/sidebar.php");
                 </td>
                 <td>
                   <a title="Update Task" href="edit-task.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></a>
-                  <a title="View" href="task-details.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-folder-open"></span></a>
-                  <?php if ($user_role == 1) { ?>
+                <!--  <a title="View" href="task-details.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-folder-open"></span></a> -->
+                  <?php { ?>
                   <a class="btn btn-danger btn-sm" title="Delete" href="?delete_task=delete_task&task_id=<?php echo $row['task_id']; ?>" onclick="return confirm('Are you sure?');"><span class="glyphicon glyphicon-trash"></span></a>
                   <?php } ?>
                 </td>
