@@ -99,7 +99,7 @@
       <!-- User profile dropdown -->
       <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-          <img src="" width="50px">
+          <img src="assets\img\profile_icon.png" width="50px">
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
