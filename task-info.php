@@ -123,7 +123,7 @@ include("include/sidebar.php");
                 </td>
                 <td>
                   <a title="Update Task" href="edit-task.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit"></span></a>
-                <!--  <a title="View" href="task-details.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-folder-open"></span></a> -->
+                  <a title="View" href="task-details.php?task_id=<?php echo $row['task_id']; ?>" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-folder-open"></span></a>
                   <?php { ?>
                   <a class="btn btn-danger btn-sm" title="Delete" href="?delete_task=delete_task&task_id=<?php echo $row['task_id']; ?>" onclick="return confirm('Are you sure?');"><span class="glyphicon glyphicon-trash"></span></a>
                   <?php } ?>

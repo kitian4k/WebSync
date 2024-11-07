@@ -28,20 +28,20 @@ if ($user_id == NULL || $security_key == NULL) {
 }
 
 // Get the user's course and group from the database
-$stmt = $pdo->prepare("SELECT user_course, user_group FROM tbl_admin WHERE user_id = :user_id");
+$stmt = $pdo->prepare("SELECT user_course, user_group, fullname FROM tbl_admin WHERE user_id = :user_id");
 $stmt->execute(['user_id' => $user_id]);
 $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $user_course = $user_info['user_course'];
 $user_group = $user_info['user_group'];
 
-// Fetch members of the same group
+// Fetch other members of the same group, excluding the logged-in user
 $group_members_sql = "SELECT user_id, fullname FROM tbl_admin WHERE user_course = :user_course AND user_group = :user_group AND user_id != :user_id";
 $group_members_stmt = $pdo->prepare($group_members_sql);
 $group_members_stmt->execute([
     'user_course' => $user_course,
     'user_group' => $user_group,
-    'user_id' => $user_id // Exclude the logged-in user from the list
+    'user_id' => $user_id
 ]);
 
 $page_name = "Group Members";
@@ -62,22 +62,31 @@ include("include/sidebar.php");
                         <tr>
                             <th>#</th>
                             <th>Member Name</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $serial = 1;
+                        // Display the logged-in user as the first row
+                        echo "<tr>
+                                <td>1</td>
+                                <td>{$user_info['fullname']} (You)</td>
+                                <td>Logged-in User</td>
+                              </tr>";
+                        $serial = 2;
+
+                        // Display other group members
                         $num_row = $group_members_stmt->rowCount();
                         if ($num_row == 0) {
-                            echo '<tr><td colspan="2">No Members found in your group</td></tr>';
+                            echo '<tr><td colspan="3">No Other Members found in your group</td></tr>';
                         } else {
                             while ($row = $group_members_stmt->fetch(PDO::FETCH_ASSOC)) {
-                                ?>
-                                <tr>
-                                    <td><?php echo $serial; $serial++; ?></td>
-                                    <td><?php echo $row['fullname']; ?></td>
-                                </tr>
-                                <?php
+                                echo "<tr>
+                                        <td>{$serial}</td>
+                                        <td>{$row['fullname']}</td>
+                                        <td>Member</td>
+                                      </tr>";
+                                $serial++;
                             }
                         }
                         ?>

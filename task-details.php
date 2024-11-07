@@ -32,10 +32,6 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
 
 ?>
 
-<!--modal for employee add-->
-<!-- //  Author Name: Mayuri K. 
- // for any PHP, Codeignitor, Laravel OR Python work contact me at mayuri.infospace@gmail.com  
- //Visit website : www.mayurik.com -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 
@@ -46,42 +42,47 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
           <div class="row">
             <div class="col-md-8 col-md-offset-2">
               <div class="well">
-                <h3 class="text-center bg-primary" style="padding: 7px;">Task Details </h3><br>
+                <h3 class="text-center" style="padding: 7px;">Task Details </h3><br>
 
                       <div class="row">
                         <div class="col-md-12">
 
-                        	 <div class="table-responsive">
-				                  <table  class="table table-codensed  display" id="example" style="width:100%">
-				                    <tbody>
-				                      <tr>
-				                        <td>Task Title</td><td><?php echo $row['t_title']; ?></td>
-				                      </tr>
-				                      <tr>
-				                        <td>Description</td><td><?php echo $row['t_description']; ?></td>
-				                      </tr>
-				                      <tr>
-				                        <td>Start Time</td><td><?php echo $row['t_start_time']; ?></td>
-				                      </tr>
-				                      <tr>
-				                        <td>End Time</td><td><?php echo $row['t_end_time']; ?></td>
-				                      </tr>
-				                      <tr>
-				                        <td>Assign To</td><td><?php echo $row['fullname']; ?></td>
-				                      </tr>
-				                      <tr>
-				                        <td>Status</td><td><?php  if($row['status'] == 1){
-											                        echo "In Progress";
-											                    }elseif($row['status'] == 2){
-											                       echo "Done";
-											                    }else{
-											                      echo "To-do";
-											                    } ?></td>
-				                      </tr>
-
-				                    </tbody>
-				                  </table>
-				                </div>
+						<div class="table-responsive">
+							<table class="table table-condensed display" id="example" style="width:100%">
+								<thead>
+									<tr>
+										<th>Field</th>
+										<th>Details</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Task Title</td>
+										<td><?php echo $row['t_title']; ?></td>
+									</tr>
+									<tr>
+										<td>Description</td>
+										<td><?php echo $row['t_description']; ?></td>
+									</tr>
+									<tr>
+										<td>Start Time</td>
+										<td><?php echo $row['t_start_time']; ?></td>
+									</tr>
+									<tr>
+										<td>End Time</td>
+										<td><?php echo $row['t_end_time']; ?></td>
+									</tr>
+									<tr>
+										<td>Assign To</td>
+										<td><?php echo $row['fullname']; ?></td>
+									</tr>
+									<tr>
+										<td>Status</td>
+										<td><?php echo ($row['status'] == 1) ? "In Progress" : (($row['status'] == 2) ? "Done" : "To-do"); ?></td>
+									</tr>
+								</tbody>
+							</table>
+</div>
 
                             <div class="form-group">
 
