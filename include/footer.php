@@ -11,13 +11,7 @@
 <script>
 	$(document).ready(function() {
     $('#example').DataTable( {
-        dom: 'Bfrtip',
-        buttons: [
-            'copyHtml5',
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
+        
     } );
 } );
 </script>
@@ -51,20 +45,5 @@
           
         </style>
 
-        <style>
-.footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background-color: white;
-  color: black;
-  text-align: center;
-}
-</style>
-
-<div class="footer">
-  <p>WebSync: Developing a Web-Based Task Management Tool to Promote Collaborative Problem-Solving Skills (ColPS) - 2024 All Rights Reserved.</p>
-</div>
 </body>
 </html>

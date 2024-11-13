@@ -34,7 +34,7 @@ include("include/login_header.php");
     <div class="well col-md-6" style="position:relative;">
         <div class="row">
             <div class="col-md-6">
-                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 170px;">
+                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 170px;" class="logo-image">
             </div>
             <div class="col-md-6">
                 <form class="row" action="" method="POST" onsubmit="return validateForm()">
@@ -81,18 +81,7 @@ include("include/login_header.php");
                         </select>
                     </div>
 
-                    <!-- Group Dropdown -->
-                    <div class="input-group form-group mb-3">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-th-large"></i></span>
-                        <select class="form-control" name="user_group" required>
-                            <option value="" disabled selected>Select Group</option>
-                            <option value="Group 1">Group 1</option>
-                            <option value="Group 2">Group 2</option>
-                            <option value="Group 3">Group 3</option>
-                            <option value="Group 4">Group 4</option>
-                        </select>
-                    </div>
-
+                    
                     <!-- Password Textbox -->
                     <div class="input-group form-group mb-3">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -100,7 +89,7 @@ include("include/login_header.php");
                     </div>
 
                     <!-- Links and Register Button -->
-                    <div class="d-flex justify-content-between mb-3">
+                    <div class="link-container">
                         <span>Already have an account? <a href="index.php" class="sign-up-link">Log In</a></span>
                     </div>
 
@@ -136,8 +125,13 @@ include("include/login_header.php");
     .justify-content-between {
         justify-content: space-between;
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .logo-image {
+        margin-top: 0 !important;
+        }
+    }
 </style>
 
-<?php
-include("include/footer.php");
-?>
+

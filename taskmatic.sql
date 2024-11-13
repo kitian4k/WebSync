@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 07, 2024 at 01:35 PM
+-- Generation Time: Nov 12, 2024 at 08:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -66,21 +66,6 @@ CREATE TABLE `task_info` (
   `status` int(11) NOT NULL DEFAULT 0 COMMENT '0 = incomplete, 1 = In progress, 2 = complete'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `task_info`
---
-
-INSERT INTO `task_info` (`task_id`, `t_title`, `t_description`, `t_start_time`, `t_end_time`, `t_user_id`, `status`) VALUES
-(58, 'Survey', 'Survey', '2024-11-04 12:00', '2024-11-05 12:00', 33, 1),
-(43, 'Chapter 3', '123', '2024-10-26 12:04', '2024-10-31 12:00', 29, 2),
-(57, 'Video Recording', 'Website Demo', '2024-11-04 12:00', '2024-11-06 12:00', 29, 1),
-(72, 'CHAPTER 5', 'FINISH ALL THE TASK', '2024-11-08 12:00', '2024-11-11 12:00', 30, 1),
-(64, 'Video Recording', '123', '2024-11-06 12:00', '2024-11-08 12:00', 33, 1),
-(70, 'TEST TASK FOR ADMIN', 'TEST TASK FOR ADMIN', '2024-11-08 12:00', '2024-11-11 12:00', 37, 1),
-(66, 'Research Defense', 'Research Defense', '', '2024-11-15 12:00', 33, 1),
-(71, 'CHAPTER 4', 'FOR DEFENSE', '2024-11-08 12:00', '2024-11-15 12:00', 1, 0),
-(73, 'PRINT ALL THE CHAPTERS', 'CHAPTER 1 TO 5', '', '2024-11-11 12:00', 34, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -104,10 +89,23 @@ CREATE TABLE `tbl_admin` (
 --
 
 INSERT INTO `tbl_admin` (`user_id`, `fullname`, `username`, `email`, `password`, `temp_password`, `user_role`, `user_course`, `user_group`) VALUES
-(1, 'Jerald Illustrisimo', 'TUPM-20-0009', 'TEST@gmail.com', 'admin123', NULL, 1, 'BSIE-ICT', 'Group 1'),
-(39, 'ACCOUNT ADMIN', 'TUPM-20-1234', 'admin123@tup.edu.ph', 'admin123', NULL, 1, 'BSIE-ICT', 'Group 1'),
-(30, 'Janeane Libres', 'TUPM-20-0003', 'TEST3@gmail.com', 'Test123', NULL, 1, 'BSIE-ICT', 'Group 1'),
-(34, 'Agatha Lapuz', 'TUPM-20-0007', 'Aesth@tup.edu.ph', 'admin123', NULL, 1, 'BSIE-ICT', 'Group 1');
+(1, 'Test Acc #1', 'TUPM-20-0001', 'TEST@gmail.com', 'admin123', NULL, 1, '', ''),
+(39, 'Test Acc #2', 'TUPM-20-0002', 'admin123@tup.edu.ph', 'admin123', NULL, 1, 'BSIE-ICT', 'Group 1'),
+(30, 'Test Acc #3', 'TUPM-20-0003', 'TEST3@gmail.com', 'Test123', NULL, 1, '', ''),
+(41, 'Test Acc #4', 'TUPM-20-0004', 'TEST3@gmail.com', 'Test123', NULL, 1, '', ''),
+(42, 'Test Acc #5', 'TUPM-20-0005', 'Aesth@tup.edu.ph', 'admin123', NULL, 1, '', ''),
+(40, 'Test Acc #6', 'TUPM-20-0006', 'Aesth@tup.edu.ph', 'admin123', NULL, 1, '', ''),
+(34, 'Test Acc #7', 'TUPM-20-0007', 'Aesth@tup.edu.ph', 'admin123', NULL, 1, '', ''),
+(43, 'Janna Agatha Lapuz', 'TUPM-20-1234', 'Aesth@tup.edu.ph', 'admin123', NULL, 1, 'BSIE-ICT', 'GROUP 123');
+
+CREATE TABLE group_join_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    group_name VARCHAR(255) NOT NULL,
+    course_name VARCHAR(255) NOT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 --
 -- Indexes for dumped tables
@@ -145,14 +143,17 @@ ALTER TABLE `attendance_info`
 -- AUTO_INCREMENT for table `task_info`
 --
 ALTER TABLE `task_info`
-  MODIFY `task_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `task_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `tbl_admin`
 --
 ALTER TABLE `tbl_admin`
-  MODIFY `user_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `user_id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 COMMIT;
+
+ALTER TABLE group_join_requests ADD COLUMN user_group VARCHAR(255);
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

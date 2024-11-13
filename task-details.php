@@ -14,13 +14,11 @@ $user_role = $_SESSION['user_role'];
 
 $task_id = $_GET['task_id'];
 
-
-
-if(isset($_POST['update_task_info'])){
-    $obj_admin->update_task_info($_POST,$task_id, $user_role);
+if (isset($_POST['update_task_info'])) {
+    $obj_admin->update_task_info($_POST, $task_id, $user_role);
 }
 
-$page_name="Edit Task";
+$page_name = "Edit Task";
 include("include/sidebar.php");
 
 $sql = "SELECT a.*, b.fullname 
@@ -34,79 +32,78 @@ $row = $info->fetch(PDO::FETCH_ASSOC);
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+<!-- Add CSS for scrollable table container -->
+<style>
+    /* Container for scrollable table */
+    .scrollable-table-container {
+        max-height: 500px;
+        overflow-y: auto; 
+        border: 1px solid #ddd; 
+    }
+</style>
 
-
-    <div class="row">
-      <div class="col-md-12">
+<div class="row">
+    <div class="col-md-12">
         <div class="well well-custom">
-          <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-              <div class="well">
-                <h3 class="text-center" style="padding: 7px;">Task Details </h3><br>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                        <h3 class="text-center" style="padding: 7px;">Task Details </h3><br>
 
-                      <div class="row">
-                        <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                
+                                <div class="scrollable-table-container">
+                                    <table class="table table-condensed display" id="example" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Field</th>
+                                                <th>Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Task Title</td>
+                                                <td><?php echo $row['t_title']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Description</td>
+                                                <td><?php echo $row['t_description']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Start Time</td>
+                                                <td><?php echo $row['t_start_time']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td>End Time</td>
+                                                <td><?php echo $row['t_end_time']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Assign To</td>
+                                                <td><?php echo $row['fullname']; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Status</td>
+                                                <td><?php echo ($row['status'] == 1) ? "In Progress" : (($row['status'] == 2) ? "Done" : "To-do"); ?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-						<div class="table-responsive">
-							<table class="table table-condensed display" id="example" style="width:100%">
-								<thead>
-									<tr>
-										<th>Field</th>
-										<th>Details</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Task Title</td>
-										<td><?php echo $row['t_title']; ?></td>
-									</tr>
-									<tr>
-										<td>Description</td>
-										<td><?php echo $row['t_description']; ?></td>
-									</tr>
-									<tr>
-										<td>Start Time</td>
-										<td><?php echo $row['t_start_time']; ?></td>
-									</tr>
-									<tr>
-										<td>End Time</td>
-										<td><?php echo $row['t_end_time']; ?></td>
-									</tr>
-									<tr>
-										<td>Assign To</td>
-										<td><?php echo $row['fullname']; ?></td>
-									</tr>
-									<tr>
-										<td>Status</td>
-										<td><?php echo ($row['status'] == 1) ? "In Progress" : (($row['status'] == 2) ? "Done" : "To-do"); ?></td>
-									</tr>
-								</tbody>
-							</table>
-</div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <a title="Update Task" href="task-info.php">
+                                            <span class="btn btn-success-custom btn-xs">Go Back</span>
+                                        </a>
+                                    </div>
+                                </div>
 
-                            <div class="form-group">
-
-                              <div class="col-sm-3">
-                                <a title="Update Task"  href="task-info.php"><span class="btn btn-success-custom btn-xs">Go Back</span></a>
-                              </div>
                             </div>
-                          </form> 
                         </div>
-                      </div>
 
-              </div>
+                    </div>
+                </div>
             </div>
-          </div>
 
         </div>
-      </div>
     </div>
-
-
-<?php
-
-
-include("include/footer.php");
-
-?>
-
+</div>

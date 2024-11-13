@@ -29,7 +29,7 @@ include("include/login_header.php");
     <div class="well col-md-6" style="position:relative;">
         <div class="row">
             <div class="col-md-6">
-                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 70px;">
+                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 70px;" class="logo-image">
             </div>
             <div class="col-md-6">
                 <form class="row" action="" method="POST">
@@ -61,9 +61,71 @@ include("include/login_header.php");
                 <input type="password" class="form-control" name="repeat_password" placeholder="Repeat New Password" required>
             </div>
 
+             <!-- Links and Register Button -->
+             <div class="link-container">
+                <span>Already have an account? <a href="index.php" class="sign-up-link">Log In</a></span>
+            </div>
+
             <button type="submit" name="reset_password_btn" class="btn btn-primary">Reset Password</button>
         </form>
     </div>
 </div>
 
-<?php include("include/footer.php"); ?>
+<style>
+    .ad-auth-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .well {
+        background-color: #f9f9f9;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .text-secondary {
+        color: #6c757d;
+        text-decoration: none;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .link-container {   
+        margin-bottom: 10px;
+    }
+
+     /* Responsive Design */
+     @media (max-width: 768px) {
+        .form-heading h2 {
+            font-size: 1.5rem;
+        }
+        
+        .well {
+            padding: 15px;
+        }
+
+        .link-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        }
+        .link-container a,
+        .link-container span {
+            margin-bottom: 8px; /* Optional spacing for mobile */
+        }
+        .logo-image {
+        margin-top: 0 !important;
+        }
+
+    }
+
+

@@ -145,9 +145,9 @@ include("include/sidebar.php");
     <!-- Contact Admin/Teacher Section -->
     <h4>Contact Admin/Teacher</h4>
     <p>If you have any issues or questions, please contact the admin or teacher via email:</p>
-    <p><a href="mailto:admin@example.com">admin@example.com</a></p>
+    <p><a href="mailto:admin@example.com">admin@tup.edu.ph</a></p>
 </div>
 </body>
 </html>
 
-<?php include("include/footer.php"); ?>
+

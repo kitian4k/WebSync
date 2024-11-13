@@ -23,12 +23,12 @@ include("include/login_header.php");
     <div class="well col-md-6" style="position:relative;">
         <div class="row">
             <div class="col-md-6">
-                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 60px;">
+                <img src="assets/img/WebSync_Banner.png" width="90%" style="margin-top: 60px;" class="logo-image">
             </div>
             <div class="col-md-6">
                 <form class="row" action="" method="POST">
                     <div class="form-heading">
-                        <h2 class="text-left">Welcome to Websync!</h2>
+                    <h2 class="title welcome-title">Welcome to Websync!</h2>
                     </div>
                     <form class="mt-4" action="" method="POST">
             <?php if(isset($info)){ ?>
@@ -51,12 +51,13 @@ include("include/login_header.php");
             </div>
             
             <!-- Text Links Aligned Side by Side -->
-			<div class="d-flex justify-content-between mb-3">
-			<a href="forgot-password.php" class="text-secondary">Forgot Password?</a>
-			<span> <p1 class="text-secondary">Don't have an account? </p1>
-				<a href="index_register.php" class="sign-up-link">Sign up</a>
-			</span>
-		</div>
+            <div class="link-container">
+            <a href="forgot-password.php" class="text-secondary">Forgot Password?</a>
+            <span>
+                <span class="text-secondary">Don't have an account? </span>
+                <a href="index_register.php" class="sign-up-link">Sign up</a>
+            </span>
+            </div>
 
             <!-- Login Button -->
 			<div class="text-center" style="margin-top: 20px;">
@@ -93,10 +94,37 @@ include("include/login_header.php");
     .justify-content-between {
         justify-content: space-between;
     }
+
+    .link-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+     /* Responsive Design */
+     @media (max-width: 768px) {
+        .form-heading h2 {
+            font-size: 1.5rem;
+        }
+        
+        .well {
+            padding: 15px;
+        }
+
+        .link-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        }
+        .link-container a,
+        .link-container span {
+            margin-bottom: 8px; /* Optional spacing for mobile */
+        }
+        .logo-image {
+        margin-top: 0 !important;
+        }
+
+    }
+
 </style>
 
-<?php
-
-include("include/footer.php");
-
-?>
+<?php include("include/footer.php"); ?>

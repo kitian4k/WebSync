@@ -111,4 +111,4 @@ $row = $info_stmt->fetch(PDO::FETCH_ASSOC);
     });
 </script>
 
-<?php include("include/footer.php"); ?>
+

@@ -44,7 +44,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="task-info.php"><span style=>
+      <a class="navbar-brand" href="dashboard.php"><span style=>
         <img src="assets/img/websync_banner.png" height="48px"></span></a>
     </div>
 
@@ -56,11 +56,11 @@
     <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-nav-custom">
 
-        <li <?php if($page_name == "" ){echo "class=\"active\"";} ?>><a href="dashboard.php"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-th
+        <li <?php if($page_name == "Task Dashboard" ){echo "class=\"active\"";} ?>><a href="dashboard.php"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-th
         "></span> Dashboard </a></li>
         <li <?php if($page_name == "Task_Info" ){echo "class=\"active\"";} ?>><a href="task-info.php"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-tasks" ></span> Task Mangement</a></li>
-        <li <?php if($page_name == "Attendance" ){echo "class=\"active\"";} ?>><a href="group-info.php"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-briefcase"></span> Group Management </a></li>
-        <li <?php if($page_name == "Admin" ){echo "class=\"active\"";} ?>><a href="profile.php"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-user"></span> Profile </a></li>
+        <li <?php if($page_name == "Group Members" ){echo "class=\"active\"";} ?>><a href="group-info.php"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-briefcase"></span> Group Management </a></li>
+        <li <?php if($page_name == "Profile" ){echo "class=\"active\"";} ?>><a href="profile.php"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-user"></span> Profile </a></li>
         <li ><a href="?logout=logout"><span style="font-size:16px;    margin-right: 13px;" class="pull-left hidden-xs showopacity glyphicon glyphicon-log-out"></span> Logout</a></li>
       </ul>
     </div>

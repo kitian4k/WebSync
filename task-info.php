@@ -62,6 +62,7 @@ include("include/sidebar.php");
   <div class="col-md-12">
     <div class="well well-custom">
       <div class="gap"></div>
+      <center><h3>Task Management Section</h3></center>
       <div class="row">
         <div class="col-md-8">
           <div class="btn-group">
@@ -71,7 +72,6 @@ include("include/sidebar.php");
           </div>
         </div>
       </div>
-      <center><h3>Task Management Section</h3></center>
       <div class="gap"></div>
       <div class="table-responsive">
         <table class="table table-condensed display" id="example" style="width:100%">
@@ -137,6 +137,24 @@ include("include/sidebar.php");
   </div>
 </div>
 
-<?php
-include("include/footer.php");
-?>
+<?php include("include/footer.php"); ?>
+
+<style>
+  .table-responsive {
+    overflow-x: auto;
+}
+
+@media (max-width: 576px) {
+    .btn-menu {
+        width: 100%;
+        margin-bottom: 10px !important;
+    }
+
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        
+    }
+}
+</style>

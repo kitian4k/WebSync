@@ -219,5 +219,4 @@ include("include/sidebar.php");
 
 </body>
 
-<?php include("include/footer.php"); ?>
 </html>
